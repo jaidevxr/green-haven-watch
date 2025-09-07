@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Clock, Leaf } from 'lucide-react';
+import { LocationSearch } from './LocationSearch';
 
 export const Navbar = () => {
   const [currentTime, setCurrentTime] = useState(new Date());
+  const [currentLocation, setCurrentLocation] = useState<string>('');
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -40,6 +42,14 @@ export const Navbar = () => {
           <h1 className="text-lg font-semibold text-foreground">
             Disaster Response Dashboard
           </h1>
+        </div>
+
+        {/* Center - Location Search */}
+        <div className="flex-1 max-w-md mx-8">
+          <LocationSearch 
+            onLocationSelect={(location) => setCurrentLocation(location.name)}
+            currentLocation={currentLocation}
+          />
         </div>
 
         {/* Right side - Live clock */}

@@ -5,9 +5,10 @@ import { Overview } from './tabs/Overview';
 import { Weather } from './tabs/Weather';
 import { Disasters } from './tabs/Disasters';
 import { AIInsights } from './tabs/AIInsights';
+import { Guidelines } from './tabs/Guidelines';
 import backgroundImage from '@/assets/nature-background.jpg';
 
-export type TabType = 'overview' | 'weather' | 'disasters' | 'ai';
+export type TabType = 'overview' | 'weather' | 'disasters' | 'ai' | 'guidelines';
 
 export const Dashboard = () => {
   const [activeTab, setActiveTab] = useState<TabType>('overview');
@@ -22,6 +23,8 @@ export const Dashboard = () => {
         return <Disasters />;
       case 'ai':
         return <AIInsights />;
+      case 'guidelines':
+        return <Guidelines />;
       default:
         return <Overview />;
     }

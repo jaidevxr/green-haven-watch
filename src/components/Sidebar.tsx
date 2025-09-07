@@ -1,7 +1,7 @@
 import React from 'react';
 import { cn } from '@/lib/utils';
 import { TabType } from './Dashboard';
-import { BarChart3, CloudSun, AlertTriangle, Brain, Leaf } from 'lucide-react';
+import { BarChart3, CloudSun, AlertTriangle, Brain, Leaf, Shield } from 'lucide-react';
 
 interface SidebarProps {
   activeTab: TabType;
@@ -13,6 +13,7 @@ const navigation = [
   { id: 'weather' as const, label: 'Weather', icon: CloudSun },
   { id: 'disasters' as const, label: 'Disasters', icon: AlertTriangle },
   { id: 'ai' as const, label: 'AI Insights', icon: Brain },
+  { id: 'guidelines' as const, label: 'Guidelines', icon: Shield },
 ];
 
 export const Sidebar: React.FC<SidebarProps> = ({ activeTab, onTabChange }) => {
