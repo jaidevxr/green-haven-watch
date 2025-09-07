@@ -1,6 +1,6 @@
 import React from 'react';
 import { GlassCard } from '../GlassCard';
-import { InteractiveMap } from '../InteractiveMap';
+import { RealInteractiveMap } from '../RealInteractiveMap';
 import { CloudSun, AlertTriangle, Brain, TrendingUp } from 'lucide-react';
 
 export const Overview = () => {
@@ -79,7 +79,7 @@ export const Overview = () => {
               </p>
             </div>
             <div className="h-[420px]">
-              <InteractiveMap />
+              <RealInteractiveMap />
             </div>
           </GlassCard>
         </div>

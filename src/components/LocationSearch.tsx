@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Search, MapPin, Loader2 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -17,6 +17,11 @@ export const LocationSearch: React.FC<LocationSearchProps> = ({
   const [isSearching, setIsSearching] = useState(false);
   const [isGettingLocation, setIsGettingLocation] = useState(false);
   const { toast } = useToast();
+
+  // Auto-fetch location on component mount
+  useEffect(() => {
+    getCurrentLocation();
+  }, []);
 
   const getCurrentLocation = () => {
     setIsGettingLocation(true);

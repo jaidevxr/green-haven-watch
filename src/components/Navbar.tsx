@@ -1,35 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Clock, Leaf } from 'lucide-react';
+import { Leaf } from 'lucide-react';
 import { LocationSearch } from './LocationSearch';
 
 export const Navbar = () => {
-  const [currentTime, setCurrentTime] = useState(new Date());
   const [currentLocation, setCurrentLocation] = useState<string>('');
-
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setCurrentTime(new Date());
-    }, 1000);
-
-    return () => clearInterval(timer);
-  }, []);
-
-  const formatTime = (date: Date) => {
-    return date.toLocaleTimeString([], { 
-      hour: '2-digit', 
-      minute: '2-digit', 
-      second: '2-digit' 
-    });
-  };
-
-  const formatDate = (date: Date) => {
-    return date.toLocaleDateString([], {
-      weekday: 'long',
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
-    });
-  };
 
   return (
     <header className="h-16 bg-gradient-glass backdrop-blur-glass border-b border-glass-border shadow-card">
@@ -40,7 +14,7 @@ export const Navbar = () => {
             <Leaf className="w-5 h-5 text-primary-foreground" />
           </div>
           <h1 className="text-lg font-semibold text-foreground">
-            Disaster Response Dashboard
+            Disaster Response Dashboard - India
           </h1>
         </div>
 
@@ -52,19 +26,10 @@ export const Navbar = () => {
           />
         </div>
 
-        {/* Right side - Live clock */}
-        <div className="flex items-center gap-4">
-          <div className="text-right">
-            <div className="text-sm text-muted-foreground">
-              {formatDate(currentTime)}
-            </div>
-            <div className="flex items-center gap-2 text-foreground">
-              <Clock className="w-4 h-4" />
-              <span className="font-mono text-lg font-semibold">
-                {formatTime(currentTime)}
-              </span>
-            </div>
-          </div>
+        {/* Right side - Status indicator */}
+        <div className="flex items-center gap-2">
+          <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
+          <span className="text-sm text-muted-foreground">Live Data</span>
         </div>
       </div>
     </header>
