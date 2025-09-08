@@ -1,72 +1,117 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { GlassCard } from '../GlassCard';
-import { Brain, TrendingUp, Target, AlertCircle, CheckCircle } from 'lucide-react';
+import { Brain, TrendingUp, Target, AlertCircle, CheckCircle, Activity, Zap } from 'lucide-react';
 
 export const AIInsights = () => {
-  const riskPredictions = [
+  const [liveStats, setLiveStats] = useState({
+    accuracy: 94.2,
+    dataPoints: 156000,
+    predictionTime: 2.3,
+    activeModels: 12
+  });
+
+  const [riskPredictions, setRiskPredictions] = useState([
     {
       id: 1,
-      type: 'Wildfire Risk',
-      location: 'Northern California',
-      probability: 78,
-      timeframe: '48 hours',
+      type: 'Cyclone Risk',
+      location: 'Bay of Bengal - Odisha Coast',
+      probability: 82,
+      timeframe: '72 hours',
       trend: 'increasing',
-      factors: ['Low humidity', 'High winds', 'Dry vegetation'],
+      factors: ['Sea surface temperature', 'Wind convergence', 'Low pressure system'],
       confidence: 'High'
     },
     {
       id: 2,
       type: 'Flood Risk',
-      location: 'Gulf Coast Region',
-      probability: 45,
-      timeframe: '5 days',
+      location: 'Kerala - Western Ghats',
+      probability: 67,
+      timeframe: '48 hours',
       trend: 'stable',
-      factors: ['Heavy rainfall forecast', 'Saturated soil', 'River levels'],
-      confidence: 'Medium'
+      factors: ['Monsoon intensity', 'River levels', 'Soil saturation'],
+      confidence: 'High'
     },
     {
       id: 3,
-      type: 'Severe Weather',
-      location: 'Midwest Plains',
-      probability: 62,
-      timeframe: '72 hours',
-      trend: 'decreasing',
-      factors: ['Temperature differential', 'Wind shear', 'Atmospheric pressure'],
-      confidence: 'High'
+      type: 'Heat Wave',
+      location: 'Rajasthan - North Gujarat',
+      probability: 78,
+      timeframe: '24 hours',
+      trend: 'increasing',
+      factors: ['Temperature anomaly', 'Humidity deficit', 'Wind patterns'],
+      confidence: 'Medium'
     },
-  ];
+    {
+      id: 4,
+      type: 'Landslide Risk',
+      location: 'Himachal Pradesh Hills',
+      probability: 45,
+      timeframe: '96 hours',
+      trend: 'decreasing',
+      factors: ['Soil moisture', 'Slope stability', 'Rainfall intensity'],
+      confidence: 'Medium'
+    },
+  ]);
+
+  useEffect(() => {
+    // Simulate real-time updates
+    const interval = setInterval(() => {
+      setLiveStats(prev => ({
+        accuracy: 92 + Math.random() * 4,
+        dataPoints: 150000 + Math.floor(Math.random() * 20000),
+        predictionTime: 2 + Math.random() * 1,
+        activeModels: 10 + Math.floor(Math.random() * 5)
+      }));
+
+      // Update risk predictions with slight variations
+      setRiskPredictions(prev => prev.map(prediction => ({
+        ...prediction,
+        probability: Math.max(20, Math.min(95, prediction.probability + (Math.random() - 0.5) * 5))
+      })));
+    }, 45000); // Update every 45 seconds
+
+    return () => clearInterval(interval);
+  }, []);
 
   const aiRecommendations = [
     {
       id: 1,
       priority: 'High',
-      action: 'Deploy additional fire monitoring sensors',
-      location: 'San Francisco Bay Area',
-      reason: 'AI models predict 80% wildfire risk increase',
-      status: 'pending'
+      action: 'Alert NDRF teams for cyclone preparedness',
+      location: 'Odisha Coastal Districts',
+      reason: 'AI models predict 82% cyclone formation probability',
+      status: 'in-progress'
     },
     {
       id: 2,
-      priority: 'Medium',
-      action: 'Issue evacuation preparedness alert',
-      location: 'Marin County',
-      reason: 'Historical pattern analysis shows elevated risk',
-      status: 'completed'
+      priority: 'High',
+      action: 'Issue heat wave advisory',
+      location: 'Rajasthan & Gujarat',
+      reason: 'Temperature models show 78% heat wave probability',
+      status: 'pending'
     },
     {
       id: 3,
       priority: 'Medium',
-      action: 'Coordinate with local emergency services',
-      location: 'Houston Metropolitan Area',
-      reason: 'Flood risk models indicate potential flash flooding',
-      status: 'in-progress'
+      action: 'Monitor dam water levels',
+      location: 'Kerala - Idukki District',
+      reason: 'Flood risk models indicate heavy rainfall impact',
+      status: 'completed'
     },
     {
       id: 4,
+      priority: 'Medium',
+      action: 'Landslide monitoring activation',
+      location: 'Himachal Pradesh',
+      reason: 'Geological stability analysis shows moderate risk',
+      status: 'in-progress'
+    },
+    {
+      id: 5,
       priority: 'Low',
-      action: 'Update emergency response protocols',
-      location: 'Oklahoma City',
-      reason: 'Weather pattern analysis suggests protocol review',
+      action: 'Update early warning systems',
+      location: 'Tamil Nadu Coast',
+      reason: 'Monsoon pattern analysis suggests system upgrade',
       status: 'pending'
     },
   ];
@@ -114,23 +159,31 @@ export const AIInsights = () => {
       {/* AI Summary Stats */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
         <GlassCard variant="ai" className="p-4 text-center">
-          <div className="text-2xl mb-2">🧠</div>
-          <p className="text-2xl font-bold text-primary-glow">94.2%</p>
+          <div className="flex items-center justify-center mb-2">
+            <Brain className="w-6 h-6 text-primary-glow" />
+          </div>
+          <p className="text-2xl font-bold text-primary-glow">{liveStats.accuracy.toFixed(1)}%</p>
           <p className="text-sm text-muted-foreground">Model Accuracy</p>
         </GlassCard>
         <GlassCard variant="ai" className="p-4 text-center">
-          <div className="text-2xl mb-2">📊</div>
-          <p className="text-2xl font-bold text-primary-glow">156K</p>
-          <p className="text-sm text-muted-foreground">Data Points</p>
+          <div className="flex items-center justify-center mb-2">
+            <Activity className="w-6 h-6 text-primary-glow" />
+          </div>
+          <p className="text-2xl font-bold text-primary-glow">{Math.floor(liveStats.dataPoints/1000)}K</p>
+          <p className="text-sm text-muted-foreground">Live Data Points</p>
         </GlassCard>
         <GlassCard variant="ai" className="p-4 text-center">
-          <div className="text-2xl mb-2">⚡</div>
-          <p className="text-2xl font-bold text-primary-glow">2.3s</p>
+          <div className="flex items-center justify-center mb-2">
+            <Zap className="w-6 h-6 text-primary-glow" />
+          </div>
+          <p className="text-2xl font-bold text-primary-glow">{liveStats.predictionTime.toFixed(1)}s</p>
           <p className="text-sm text-muted-foreground">Prediction Time</p>
         </GlassCard>
         <GlassCard variant="ai" className="p-4 text-center">
-          <div className="text-2xl mb-2">🎯</div>
-          <p className="text-2xl font-bold text-primary-glow">12</p>
+          <div className="flex items-center justify-center mb-2">
+            <Target className="w-6 h-6 text-primary-glow" />
+          </div>
+          <p className="text-2xl font-bold text-primary-glow">{liveStats.activeModels}</p>
           <p className="text-sm text-muted-foreground">Active Models</p>
         </GlassCard>
       </div>
@@ -217,7 +270,7 @@ export const AIInsights = () => {
           <div className="space-y-4">
             <div>
               <div className="flex justify-between items-center mb-2">
-                <span className="text-sm text-muted-foreground">Wildfire Prediction</span>
+                <span className="text-sm text-muted-foreground">Cyclone Prediction</span>
                 <span className="text-sm font-medium text-foreground">96.8%</span>
               </div>
               <div className="w-full bg-muted rounded-full h-2">
@@ -226,20 +279,29 @@ export const AIInsights = () => {
             </div>
             <div>
               <div className="flex justify-between items-center mb-2">
-                <span className="text-sm text-muted-foreground">Flood Forecasting</span>
-                <span className="text-sm font-medium text-foreground">92.4%</span>
+                <span className="text-sm text-muted-foreground">Monsoon Forecasting</span>
+                <span className="text-sm font-medium text-foreground">94.7%</span>
               </div>
               <div className="w-full bg-muted rounded-full h-2">
-                <div className="bg-primary h-2 rounded-full" style={{ width: '92.4%' }}></div>
+                <div className="bg-primary h-2 rounded-full" style={{ width: '94.7%' }}></div>
               </div>
             </div>
             <div>
               <div className="flex justify-between items-center mb-2">
-                <span className="text-sm text-muted-foreground">Severe Weather</span>
-                <span className="text-sm font-medium text-foreground">94.1%</span>
+                <span className="text-sm text-muted-foreground">Heat Wave Detection</span>
+                <span className="text-sm font-medium text-foreground">91.3%</span>
               </div>
               <div className="w-full bg-muted rounded-full h-2">
-                <div className="bg-primary h-2 rounded-full" style={{ width: '94.1%' }}></div>
+                <div className="bg-primary h-2 rounded-full" style={{ width: '91.3%' }}></div>
+              </div>
+            </div>
+            <div>
+              <div className="flex justify-between items-center mb-2">
+                <span className="text-sm text-muted-foreground">Landslide Risk</span>
+                <span className="text-sm font-medium text-foreground">88.9%</span>
+              </div>
+              <div className="w-full bg-muted rounded-full h-2">
+                <div className="bg-primary h-2 rounded-full" style={{ width: '88.9%' }}></div>
               </div>
             </div>
           </div>
@@ -250,8 +312,8 @@ export const AIInsights = () => {
           <div className="space-y-3">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-foreground">Bay Area Wildfire</p>
-                <p className="text-xs text-muted-foreground">Predicted 3 days ago</p>
+                <p className="text-sm font-medium text-foreground">Cyclone Fani - Odisha</p>
+                <p className="text-xs text-muted-foreground">Predicted 5 days ago</p>
               </div>
               <span className="px-2 py-1 rounded-full text-xs bg-primary/10 text-primary">
                 ✓ Accurate
@@ -259,7 +321,7 @@ export const AIInsights = () => {
             </div>
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-foreground">Houston Flooding</p>
+                <p className="text-sm font-medium text-foreground">Kerala Floods</p>
                 <p className="text-xs text-muted-foreground">Predicted 1 week ago</p>
               </div>
               <span className="px-2 py-1 rounded-full text-xs bg-primary/10 text-primary">
@@ -268,8 +330,17 @@ export const AIInsights = () => {
             </div>
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-foreground">Oklahoma Tornado</p>
-                <p className="text-xs text-muted-foreground">Predicted 2 weeks ago</p>
+                <p className="text-sm font-medium text-foreground">Delhi Heat Wave</p>
+                <p className="text-xs text-muted-foreground">Predicted 3 days ago</p>
+              </div>
+              <span className="px-2 py-1 rounded-full text-xs bg-primary/10 text-primary">
+                ✓ Accurate
+              </span>
+            </div>
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-foreground">Assam Landslide</p>
+                <p className="text-xs text-muted-foreground">Predicted 4 days ago</p>
               </div>
               <span className="px-2 py-1 rounded-full text-xs bg-warning/10 text-warning">
                 ~ Partial
