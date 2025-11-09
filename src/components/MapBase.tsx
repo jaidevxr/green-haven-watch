@@ -1,7 +1,7 @@
 import { MapContainer, TileLayer } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
-import { ReactNode } from "react";
+import { ReactNode, useEffect, useRef } from "react";
 
 // Fix for default marker icons
 delete (L.Icon.Default.prototype as any)._getIconUrl;
@@ -19,11 +19,12 @@ interface MapBaseProps {
 }
 
 export const MapBase = ({ center, zoom, children, className = "" }: MapBaseProps) => {
+  const mapRef = useRef<HTMLDivElement>(null);
+
   return (
-    <div className={`w-full h-full ${className}`}>
+    <div ref={mapRef} className={`w-full h-full ${className}`}>
       <MapContainer
-        key={`map-${center[0]}-${center[1]}-${zoom}`}
-        // @ts-ignore - react-leaflet v4 type definitions
+        // @ts-ignore
         center={center}
         // @ts-ignore
         zoom={zoom}
@@ -31,9 +32,11 @@ export const MapBase = ({ center, zoom, children, className = "" }: MapBaseProps
         scrollWheelZoom={true}
         // @ts-ignore
         style={{ width: "100%", height: "100%" }}
+        // @ts-ignore
+        key={`${center[0]}-${center[1]}-${zoom}`}
       >
         <TileLayer
-          // @ts-ignore - react-leaflet v4 type definitions
+          // @ts-ignore
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           // @ts-ignore
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
