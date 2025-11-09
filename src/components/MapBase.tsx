@@ -22,7 +22,7 @@ export const MapBase = ({ center, zoom, children, className = "" }: MapBaseProps
   return (
     <div className={`w-full h-full ${className}`}>
       <MapContainer
-        // @ts-ignore - react-leaflet v5 types
+        // @ts-ignore - react-leaflet v4 type definitions
         center={center}
         // @ts-ignore
         zoom={zoom}
@@ -30,11 +30,9 @@ export const MapBase = ({ center, zoom, children, className = "" }: MapBaseProps
         scrollWheelZoom={true}
         // @ts-ignore
         style={{ width: "100%", height: "100%" }}
-        // @ts-ignore
-        key={`map-${center[0]}-${center[1]}-${zoom}`}
       >
         <TileLayer
-          // @ts-ignore - react-leaflet v5 types
+          // @ts-ignore - react-leaflet v4 type definitions
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           // @ts-ignore
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
