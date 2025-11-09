@@ -1,11 +1,13 @@
 import { useState, useEffect } from "react";
 import { MapBase } from "@/components/MapBase";
-import { CircleMarker, Popup } from "react-leaflet";
+import { GeoJSON, Popup } from "react-leaflet";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { supabase } from "@/integrations/supabase/client";
 import { Loader2, Thermometer, Wind } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { indiaStatesGeoJSON } from "@/components/IndiaGeoJSON";
+import L from "leaflet";
 
 interface StateData {
   name: string;
@@ -15,11 +17,13 @@ interface StateData {
   temperature?: number;
   humidity?: number;
   weather?: string;
+  feelsLike?: number;
   aqi?: number;
   category?: string;
   color?: string;
   pm25?: number;
   pm10?: number;
+  stationName?: string;
 }
 
 const getTemperatureColor = (temp: number): string => {
@@ -78,74 +82,88 @@ export const AdvancedHeatmap = () => {
     }
   };
 
-  const getMarkerRadius = (point: StateData): number => {
-    if (mapType === "temperature") {
-      const temp = point.temperature || 25;
-      return 15 + (temp / 50) * 20; // Size based on temperature
-    } else {
-      const aqi = point.aqi || 50;
-      return 15 + (aqi / 500) * 25; // Size based on AQI
+  const getStateColor = (stateName: string): string => {
+    const stateData = heatmapData.find(
+      d => d.name === stateName || d.code === stateName
+    );
+    
+    if (!stateData) return "#cccccc";
+    return getMarkerColor(stateData);
+  };
+
+  const onEachFeature = (feature: any, layer: any) => {
+    const stateName = feature.properties.name;
+    const stateData = heatmapData.find(d => d.name === stateName);
+    
+    if (stateData) {
+      layer.bindPopup(`
+        <div style="font-family: system-ui; padding: 8px;">
+          <h3 style="margin: 0 0 8px 0; font-size: 16px; font-weight: 600;">${stateData.name}</h3>
+          ${mapType === "temperature" ? `
+            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
+              <span style="font-size: 24px; font-weight: 700; color: ${getMarkerColor(stateData)};">
+                ${stateData.temperature}°C
+              </span>
+            </div>
+            <p style="margin: 4px 0; font-size: 13px; color: #666;">
+              Feels like: ${stateData.feelsLike}°C
+            </p>
+            <p style="margin: 4px 0; font-size: 13px; color: #666;">
+              Humidity: ${stateData.humidity}%
+            </p>
+            <p style="margin: 4px 0; font-size: 13px; color: #666; text-transform: capitalize;">
+              ${stateData.weather}
+            </p>
+          ` : `
+            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
+              <span style="font-size: 24px; font-weight: 700;">AQI: ${stateData.aqi}</span>
+            </div>
+            <p style="margin: 4px 0; padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: 600; color: white; background-color: ${stateData.color}; display: inline-block;">
+              ${stateData.category}
+            </p>
+            <p style="margin: 4px 0; font-size: 13px; color: #666;">
+              PM2.5: ${stateData.pm25} µg/m³
+            </p>
+            <p style="margin: 4px 0; font-size: 13px; color: #666;">
+              PM10: ${stateData.pm10} µg/m³
+            </p>
+            <p style="margin: 4px 0; font-size: 11px; color: #999;">
+              Station: ${stateData.stationName}
+            </p>
+          `}
+        </div>
+      `);
     }
+    
+    layer.on({
+      mouseover: () => {
+        layer.setStyle({ weight: 3, fillOpacity: 0.9 });
+      },
+      mouseout: () => {
+        layer.setStyle({ weight: 1.5, fillOpacity: 0.7 });
+      }
+    });
   };
 
   return (
     <div className="relative h-full">
       <MapBase center={indiaCenter} zoom={5}>
-        {heatmapData.map((point, idx) => (
-          <CircleMarker
-            key={idx}
+        {heatmapData.length > 0 && (
+          <GeoJSON
             // @ts-ignore
-            center={[point.lat, point.lng]}
+            data={indiaStatesGeoJSON}
             // @ts-ignore
-            radius={getMarkerRadius(point)}
-            pathOptions={{
-              fillColor: getMarkerColor(point),
-              fillOpacity: 0.7,
-              color: "#fff",
-              weight: 2,
-              stroke: true,
-            }}
-          >
-            <Popup>
-              <div className="text-sm space-y-1 p-2">
-                <p className="font-bold text-base">{point.name}</p>
-                {mapType === "temperature" ? (
-                  <>
-                    <p className="flex items-center gap-2">
-                      <Thermometer className="w-4 h-4" />
-                      <span className="font-semibold">
-                        {point.temperature?.toFixed(1)}°C
-                      </span>
-                    </p>
-                    <p className="text-muted-foreground">
-                      Humidity: {point.humidity}%
-                    </p>
-                    <p className="text-muted-foreground capitalize">
-                      {point.weather}
-                    </p>
-                  </>
-                ) : (
-                  <>
-                    <p className="flex items-center gap-2">
-                      <Wind className="w-4 h-4" />
-                      <span className="font-semibold">AQI: {point.aqi}</span>
-                    </p>
-                    <p 
-                      className="font-semibold px-2 py-1 rounded text-white text-xs"
-                      style={{ backgroundColor: point.color }}
-                    >
-                      {point.category}
-                    </p>
-                    <div className="text-xs text-muted-foreground">
-                      <p>PM2.5: {point.pm25} µg/m³</p>
-                      <p>PM10: {point.pm10} µg/m³</p>
-                    </div>
-                  </>
-                )}
-              </div>
-            </Popup>
-          </CircleMarker>
-        ))}
+            style={(feature) => ({
+              fillColor: getStateColor(feature?.properties?.name || ""),
+              weight: 1.5,
+              opacity: 1,
+              color: '#ffffff',
+              fillOpacity: 0.7
+            })}
+            // @ts-ignore
+            onEachFeature={onEachFeature}
+          />
+        )}
       </MapBase>
 
       {/* Controls */}
