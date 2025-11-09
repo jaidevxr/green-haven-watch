@@ -88,12 +88,9 @@ serve(async (req) => {
   try {
     const { messages } = await req.json();
 
-    const LLM_API_KEY = Deno.env.get("LLM_API_KEY");
-    const LLM_API_BASE = Deno.env.get("LLM_API_BASE") || "https://api.groq.com/openai/v1";
-    const LLM_MODEL_NAME = Deno.env.get("LLM_MODEL_NAME") || "llama3-70b-8192";
-
-    if (!LLM_API_KEY) {
-      throw new Error("LLM_API_KEY not configured");
+    const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
+    if (!LOVABLE_API_KEY) {
+      throw new Error("LOVABLE_API_KEY not configured");
     }
 
     console.log("Sending request to LLM...");
@@ -170,14 +167,14 @@ serve(async (req) => {
     ];
 
     // First LLM call
-    let response = await fetch(`${LLM_API_BASE}/chat/completions`, {
+    let response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
       headers: {
-        Authorization: `Bearer ${LLM_API_KEY}`,
+        Authorization: `Bearer ${LOVABLE_API_KEY}`,
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        model: LLM_MODEL_NAME,
+        model: "google/gemini-2.5-flash",
         messages: conversationMessages,
         tools,
         tool_choice: "auto",
@@ -186,6 +183,11 @@ serve(async (req) => {
 
     let data = await response.json();
     console.log("LLM Response:", JSON.stringify(data));
+
+    // Check for errors in response
+    if (data.error || !data.choices || data.choices.length === 0) {
+      throw new Error(data.error?.message || "Invalid response from AI");
+    }
 
     let assistantMessage = data.choices[0].message;
 
@@ -231,20 +233,26 @@ serve(async (req) => {
       }
       
       // Second LLM call with tool results
-      response = await fetch(`${LLM_API_BASE}/chat/completions`, {
+      response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
         method: "POST",
         headers: {
-          Authorization: `Bearer ${LLM_API_KEY}`,
+          Authorization: `Bearer ${LOVABLE_API_KEY}`,
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          model: LLM_MODEL_NAME,
+          model: "google/gemini-2.5-flash",
           messages: conversationMessages,
         }),
       });
       
       data = await response.json();
       console.log("Final LLM Response:", JSON.stringify(data));
+      
+      // Check for errors in response
+      if (data.error || !data.choices || data.choices.length === 0) {
+        throw new Error(data.error?.message || "Invalid response from AI");
+      }
+      
       assistantMessage = data.choices[0].message;
     }
 
