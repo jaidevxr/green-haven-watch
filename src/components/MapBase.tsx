@@ -22,6 +22,7 @@ export const MapBase = ({ center, zoom, children, className = "" }: MapBaseProps
   return (
     <div className={`w-full h-full ${className}`}>
       <MapContainer
+        key={`map-${center[0]}-${center[1]}-${zoom}`}
         // @ts-ignore - react-leaflet v4 type definitions
         center={center}
         // @ts-ignore
