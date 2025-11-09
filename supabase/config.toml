@@ -6,6 +6,9 @@ verify_jwt = false
 [functions.heatmap]
 verify_jwt = false
 
+[functions.india-heatmap]
+verify_jwt = false
+
 [functions.nearby]
 verify_jwt = false
 
