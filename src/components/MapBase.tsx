@@ -22,14 +22,17 @@ export const MapBase = ({ center, zoom, children, className = "" }: MapBaseProps
   return (
     <div className={`w-full h-full ${className}`}>
       <MapContainer
-        // @ts-ignore - react-leaflet v5 props
+        // @ts-ignore - react-leaflet v5 types mismatch
         center={center}
         zoom={zoom}
+        scrollWheelZoom={true}
         style={{ width: "100%", height: "100%" }}
       >
         <TileLayer
-          // @ts-ignore - react-leaflet v5 props
+          // @ts-ignore - react-leaflet v5 types mismatch
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          // @ts-ignore
+          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         />
         {children}
       </MapContainer>
