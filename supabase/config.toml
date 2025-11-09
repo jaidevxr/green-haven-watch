@@ -1,1 +1,16 @@
 project_id = "johifofnrqsgtnlgfwwt"
+
+[functions.risk]
+verify_jwt = false
+
+[functions.heatmap]
+verify_jwt = false
+
+[functions.nearby]
+verify_jwt = false
+
+[functions.alerts]
+verify_jwt = false
+
+[functions.copilot-chat]
+verify_jwt = false
