@@ -85,10 +85,11 @@ export default function Landing() {
           {heatmapData.map((point, idx) => (
             <CircleMarker
               key={idx}
-              // @ts-ignore - react-leaflet v5 props
+              // @ts-ignore - react-leaflet types issue
               center={[point.lat, point.lng]}
+              // @ts-ignore
+              radius={8}
               pathOptions={{
-                radius: 8,
                 fillColor: getRiskColor(point.level),
                 fillOpacity: 0.6,
                 stroke: false,
